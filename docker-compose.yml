@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7-bullseye
+    container_name: redis_queue
+    restart: always
+    ports: 
+      - 6379:6379
+
+  app:
+    image: timer-worker:0.0.1
+    container_name: timer_worker
+    ports:
+      - 3001:3001
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file: .env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/healthcheck"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
