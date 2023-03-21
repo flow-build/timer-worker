@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7-bullseye
+    container_name: redis_queue
+    restart: always
+    ports: 
+      - 6379:6379
+
+  app:
+    image: node:18.12
+    container_name: flowbuild_app
+    restart: on-failure:10 # necessary due to possibility of postgres not being ready when service runs
+    depends_on:
+      - redis
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/usr/app
+      - /usr/app/node_modules
+    working_dir: /usr/app
+    #command: ./scripts/start_dev.sh
+    #command: bash -c " npm update && npm install knex -g && npm install nodemon -g && npm install && npm rebuild && npm run migrations && npm run seeds && npm run start "
+    command: bash -c " npm install && npm audit fix && npm run migrations && npm run seeds && npm run start "
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/healthcheck"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
