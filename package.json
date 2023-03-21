@@ -8,7 +8,9 @@
     "start": "node dist/server.js",
     "dev": "ts-node-dev --transpile-only src/server.ts",
     "build": "tsc",
-    "lint": "npx eslint **/*.ts --ignore-pattern node_modules/ --fix"
+    "lint": "npx eslint **/*.ts --ignore-pattern node_modules/ --fix",
+    "get-version": "echo $npm_package_version",
+    "release": "semantic-release"
   },
   "repository": {
     "type": "git",
