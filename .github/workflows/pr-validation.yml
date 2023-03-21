@@ -1,0 +1,31 @@
+name: tests
+
+on:
+  pull_request:
+    branches:
+      - main
+      - development
+
+env:
+  TIMER_QUEUE: timer
+  TIMER_HOST: localhost
+  TIMER_PORT: 5432
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: npm install
+      - name: test
+        run: npm run test
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
