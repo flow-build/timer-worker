@@ -9,22 +9,16 @@ services:
       - 6379:6379
 
   app:
-    image: node:18.12
-    container_name: flowbuild_app
-    restart: on-failure:10 # necessary due to possibility of postgres not being ready when service runs
-    depends_on:
-      - redis
+    image: timer-worker:0.0.1
+    container_name: timer_worker
     ports:
-      - 3000:3000
-    volumes:
-      - .:/usr/app
-      - /usr/app/node_modules
-    working_dir: /usr/app
-    #command: ./scripts/start_dev.sh
-    #command: bash -c " npm update && npm install knex -g && npm install nodemon -g && npm install && npm rebuild && npm run migrations && npm run seeds && npm run start "
-    command: bash -c " npm install && npm audit fix && npm run migrations && npm run seeds && npm run start "
+      - 3001:3001
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file: .env
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/healthcheck"]
+      test: ["CMD", "curl", "-f", "http://localhost:3001/healthcheck"]
       interval: 60s
       timeout: 10s
       retries: 3

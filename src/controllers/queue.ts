@@ -1,4 +1,3 @@
-import * as Koa from "koa";
 import { addJob } from "../services/queue";
 
 interface Ijob {
@@ -25,14 +24,14 @@ export async function addJobToQueue(ctx: any, next: () => Promise<any>) {
 }
 
 export async function timerNode(ctx: any, next: () => Promise<any>) {
-    console.log("called healthcheck");
+  console.log("called healthcheck");
     
-    const body = ctx.request.body;
-    console.log(body)
+  const body = ctx.request.body;
+  console.log(body)
   
-    ctx.status = 200;
-    ctx.body = {
-      message: "job Added",
-    };
-    return next();
-  }
+  ctx.status = 200;
+  ctx.body = {
+    message: "job Added",
+  };
+  return next();
+}

@@ -6,6 +6,9 @@ export function startServer(config: any) {
   const app = new Koa();
 
   const w = worker;
+  if(w) {
+    console.log('Worker initialized')
+  }
 
   app.use(freeRouter({corsOptions: config.cors.options}).routes())
 

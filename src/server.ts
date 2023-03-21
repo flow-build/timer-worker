@@ -2,7 +2,7 @@ require("dotenv").config()
 import { startServer } from "./app";
 import { appConfig } from "./utils/types";
 
-const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+const port = 3001;
 
 const config:appConfig = {
   port,

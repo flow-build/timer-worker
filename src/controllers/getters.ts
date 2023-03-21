@@ -1,6 +1,5 @@
 import { Queue } from "bullmq";
 import { connection } from "../utils/db";
-import * as Koa from "koa";
 
 const myQueue = new Queue("timer", { connection });
 
@@ -21,6 +20,7 @@ export async function listJobsDetailed(ctx: any, next: () => Promise<any>) {
 
   ctx.status = 200;
   ctx.body = {
+    timestamp: new Date(jobs[0].timestamp),
     jobs,
   };
   return next();

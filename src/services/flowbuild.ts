@@ -74,7 +74,7 @@ export async function expireTimer(id: string, data: {}) {
 export async function startProcess(id: string, data: {}) {
   console.log("flowbuild, startProcess", id);
   await getToken();
-  const process = await axios.post("/workflows/:id/create");
+  await axios.post("/workflows/:id/create");
 
   const response = await axios.post("/processes/:id/run", data);
   console.log("flowbuild, expireActivityManager", response.data);
