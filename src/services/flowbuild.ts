@@ -1,6 +1,6 @@
 import axios from "axios";
 
-axios.defaults.baseURL = "http://localhost:3000";
+axios.defaults.baseURL = process.env.FLOWBUILD_URL ? process.env.FLOWBUILD_URL : "http://localhost:3000";
 
 async function getToken() {
   console.log("flowbuild, getToken");
