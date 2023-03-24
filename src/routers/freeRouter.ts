@@ -1,10 +1,17 @@
 import Router from "@koa/router";
 import parser from "koa-bodyparser";
 import cors from "koa2-cors";
-import { addJobToQueue, timerNode } from "../controllers/queue";
+import { addProcessTimer, addUserTaskTimer, scheduleProcessTimer } from "../controllers/queue";
 import { healthcheck } from "../controllers/health";
 import { routerOptions } from "../utils/types";
-import { listJobs, listJobsDetailed } from "../controllers/getters";
+import { 
+  getJobCounts, 
+  getRepeatable, 
+  getJob,
+  getFailed,
+  getDelayed,
+  getMetrics,
+  listJobs } from "../controllers/getters";
 
 export function freeRouter(options: routerOptions = {}) {
   const router = new Router();
@@ -14,9 +21,15 @@ export function freeRouter(options: routerOptions = {}) {
   router.get("/", healthcheck);
   router.get("/healthcheck", healthcheck);
   router.get("/jobs", listJobs)
-  router.get("/jobs/details", listJobsDetailed)
-  router.post('/jobs', addJobToQueue)
-  router.post('/job1', timerNode)
+  router.get("/jobs/repeatable", getRepeatable)
+  router.get("/jobs/failed", getFailed)
+  router.get("/jobs/delayed", getDelayed)
+  router.get("/jobs/metrics", getMetrics)
+  router.get("/jobs/counts", getJobCounts)
+  router.get("/jobs/:id/details", getJob)
+  router.post('/jobs/process', addProcessTimer)
+  router.post('/jobs/usertask', addUserTaskTimer)
+  router.post('/jobs/workflow', scheduleProcessTimer)
 
   return router;
 }
