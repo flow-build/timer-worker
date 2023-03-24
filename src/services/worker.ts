@@ -1,7 +1,7 @@
 require("dotenv").config();
 import { Worker } from "bullmq";
 import { connection } from "../utils/db";
-import { expireActivityManager, expireProcess, expireTimer } from "../services/flowbuild";
+import { expireActivityManager, expireProcess, expireTimer, startProcess } from "../services/flowbuild";
 
 async function processContinue(data: any): Promise<any> {
   console.log("continueProcess", data);
@@ -23,6 +23,7 @@ async function processExpire(data: any): Promise<any> {
 
 async function processStart(data: any): Promise<any> {
   console.log("startProcess", data);
+  await startProcess(data.resourceId, {});
   return data;
 }
 

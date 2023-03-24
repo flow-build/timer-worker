@@ -73,10 +73,30 @@ export async function expireTimer(id: string, data: {}) {
 
 export async function startProcess(id: string, data: {}) {
   console.log("flowbuild, startProcess", id);
-  await getToken();
-  await axios.post("/workflows/:id/create");
-
-  const response = await axios.post("/processes/:id/run", data);
-  console.log("flowbuild, expireActivityManager", response.data);
+  const token = await getToken();
+  const process = await axios({
+    method: "post",
+    url: `/workflows/${id}/create`,
+    data: data,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    validateStatus: function (status) {
+      return status < 500; // Resolve only if the status code is less than 500
+    },
+  });
+  console.log('process created, id', process.data.process_id)
+  const response = await axios({
+    method: "post",
+    url: `/processes/${process.data.process_id}/run`,
+    data: data,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    validateStatus: function (status) {
+      return status < 500; // Resolve only if the status code is less than 500
+    },
+  });
+  console.log("flowbuild, process started");
   return response;
 }
