@@ -1,27 +1,28 @@
 import axios from "axios";
-
-axios.defaults.baseURL = process.env.FLOWBUILD_URL ? process.env.FLOWBUILD_URL : "http://localhost:3000";
+import { logger } from "../utils/logger";
 
 async function getToken() {
-  console.log("flowbuild, getToken");
+  logger.silly("flowbuild getToken");
   const baseData = {
-    actor_id: "bea79946-bb82-45a9-a446-c9635ad88f0e",
+    actor_id: process.env.TIMER_WORKER_ACTOR_ID || "bea79946-bb82-45a9-a446-c9635ad88f0e",
     claims: ["timer"],
   };
   const response = await axios({
+    baseURL: process.env.FLOWBUILD_URL ? process.env.FLOWBUILD_URL : "http://localhost:3000",
     method: "post",
     url: "/token",
     data: baseData,
   });
-  axios.defaults.headers.common["Authorization"] = response.data.jwtToken;
+  logger.silly("getToken retrieved");
   return response.data.jwtToken
 }
 
 export async function expireActivityManager(id: string, data: {}) {
-  console.log("flowbuild, expireActivityManager", id);
+  logger.debug(`flowbuild expireActivityManager id: ${id}`);
   const token = await getToken();
   const response = await axios({
     method: "post",
+    baseURL: process.env.FLOWBUILD_URL ? process.env.FLOWBUILD_URL : "http://localhost:3000",
     url: `/cockpit/activities/${id}/expire`,
     data: data,
     headers: {
@@ -31,15 +32,16 @@ export async function expireActivityManager(id: string, data: {}) {
       return status < 500; // Resolve only if the status code is less than 500
     },
   });
-  console.log("flowbuild, expireActivityManager", response.data);
+  logger.debug(`ActivityManager Expired`);
   return response;
 }
 
 export async function expireProcess(id: string, data: {}) {
-  console.log("flowbuild, expireProcess", id);
+  logger.debug(`flowbuild, expireProcess id: ${id}`);
   const token = await getToken();
   const response = await axios({
     method: "post",
+    baseURL: process.env.FLOWBUILD_URL ? process.env.FLOWBUILD_URL : "http://localhost:3000",
     url: `/cockpit/processes/${id}/expire`,
     data: data,
     headers: {
@@ -49,15 +51,16 @@ export async function expireProcess(id: string, data: {}) {
       return status < 500; // Resolve only if the status code is less than 500
     },
   });
-  console.log("flowbuild, expireProcess", response.data);
+  logger.debug(`Process expired`);
   return response;
 }
 
 export async function expireTimer(id: string, data: {}) {
-  console.log("flowbuild, expireTimer", id);
+  logger.debug(`flowbuild, expireTimer id: ${id}`);
   const token = await getToken();
   const response = await axios({
     method: "post",
+    baseURL: process.env.FLOWBUILD_URL ? process.env.FLOWBUILD_URL : "http://localhost:3000",
     url: `/processes/${id}/continue`,
     data: data,
     headers: {
@@ -67,15 +70,16 @@ export async function expireTimer(id: string, data: {}) {
       return status < 500; // Resolve only if the status code is less than 500
     },
   });
-  console.log("flowbuild, expireTimer", response.data);
+  logger.debug(`Timer expired`);
   return response;
 }
 
 export async function startProcess(id: string, data: {}) {
-  console.log("flowbuild, startProcess", id);
+  logger.debug(`flowbuild, startProcess workflowId: ${id}`);
   const token = await getToken();
-  const process = await axios({
+  const myProcess = await axios({
     method: "post",
+    baseURL: process.env.FLOWBUILD_URL ? process.env.FLOWBUILD_URL : "http://localhost:3000",
     url: `/workflows/${id}/create`,
     data: data,
     headers: {
@@ -85,10 +89,11 @@ export async function startProcess(id: string, data: {}) {
       return status < 500; // Resolve only if the status code is less than 500
     },
   });
-  console.log('process created, id', process.data.process_id)
+  logger.debug(`process created, id' ${myProcess.data.process_id}`)
   const response = await axios({
     method: "post",
-    url: `/processes/${process.data.process_id}/run`,
+    baseURL: process.env.FLOWBUILD_URL ? process.env.FLOWBUILD_URL : "http://localhost:3000",
+    url: `/processes/${myProcess.data.process_id}/run`,
     data: data,
     headers: {
       Authorization: `Bearer ${token}`,
@@ -97,6 +102,6 @@ export async function startProcess(id: string, data: {}) {
       return status < 500; // Resolve only if the status code is less than 500
     },
   });
-  console.log("flowbuild, process started");
+  logger.debug("flowbuild, process started");
   return response;
 }

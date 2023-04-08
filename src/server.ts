@@ -2,7 +2,7 @@ require("dotenv").config()
 import { startServer } from "./app";
 import { appConfig } from "./utils/types";
 
-const port = 3001;
+const port = 3002;
 
 const config:appConfig = {
   port,

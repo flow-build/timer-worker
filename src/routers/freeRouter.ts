@@ -1,7 +1,7 @@
 import Router from "@koa/router";
 import parser from "koa-bodyparser";
 import cors from "koa2-cors";
-import { addProcessTimer, addUserTaskTimer, scheduleProcessTimer } from "../controllers/queue";
+import { addProcessTimer, addUserTaskTimer, deleteJob, scheduleProcessTimer } from "../controllers/setters";
 import { healthcheck } from "../controllers/health";
 import { routerOptions } from "../utils/types";
 import { 
@@ -20,6 +20,7 @@ export function freeRouter(options: routerOptions = {}) {
 
   router.get("/", healthcheck);
   router.get("/healthcheck", healthcheck);
+  
   router.get("/jobs", listJobs)
   router.get("/jobs/repeatable", getRepeatable)
   router.get("/jobs/failed", getFailed)
@@ -27,9 +28,11 @@ export function freeRouter(options: routerOptions = {}) {
   router.get("/jobs/metrics", getMetrics)
   router.get("/jobs/counts", getJobCounts)
   router.get("/jobs/:id/details", getJob)
+
   router.post('/jobs/process', addProcessTimer)
   router.post('/jobs/usertask', addUserTaskTimer)
   router.post('/jobs/workflow', scheduleProcessTimer)
+  router.delete("/jobs/:id", deleteJob)
 
   return router;
 }
