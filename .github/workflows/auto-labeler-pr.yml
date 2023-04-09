@@ -1,0 +1,23 @@
+# Workflow to associate labels automatically
+name: Labeler
+
+on:
+  - pull_request
+
+jobs:
+  pattern-labeler:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/labeler@v4
+        with:
+          configuration-path: .github/label-settings/labeler.yml
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+  branch-name-labeler:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: TimonVS/pr-labeler-action@v4
+        with:
+          configuration-path: .github/label-settings/name-pattern-labeler.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
