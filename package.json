@@ -1,6 +1,6 @@
 {
   "name": "timer-worker",
-  "version": "1.0.0-development.2",
+  "version": "1.0.0",
   "description": "stand alone application to execute timer nodes",
   "main": "src/server.ts",
   "scripts": {
