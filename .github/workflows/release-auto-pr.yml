@@ -71,7 +71,7 @@ jobs:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build and push latest
-        if: ${{ github.ref_name == 'master' }}
+        if: ${{ github.ref_name == 'main' }}
         uses: docker/build-push-action@v3
         with:
           context: .
